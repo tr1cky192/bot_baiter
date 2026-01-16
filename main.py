@@ -1,32 +1,31 @@
 import random
-import asyncio
 from datetime import datetime, timedelta
 import pytz
-import os
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes, filters
-
+import asyncio
 TELEGRAM_BOT_TOKEN = "8507633938:AAFRcZ9hTODKM7WRkcI5kHpBAx3admkoAsM"
 
 TIMEZONE = pytz.timezone("Europe/Kyiv")
 POST_HOUR = 14
-POST_MINUTE = 0
+POST_MINUTE = 4
 
 BANTER_MESSAGES = [
     "🎯 {user}, сьогодні твоя черга тягнути катку 😎",
     "🔥 {user}, готуйся — вся тима розраховує на тебе!",
     "💥 {user}, не забудь: сьогодні без фідів 😏",
     "😈 {user}, якщо програємо — знаємо кого винити (жарт 😄)",
-    "🧠 {user}, включай мозок — сьогодні твій день!"
+    "🧠 {user}, включай мозок — сьогодні твій день!",
+    "... {user}, ти або граєш або сі дивищ крінгу!"
 ]
 
 active_users = set()
-chat_ids = set()  # Зберігаємо всі чати, де активували бота
+chat_ids = set()
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "Я бот, який щодня байтить рандомного гравця на катку в CS 😎\n"
+        "Я бот, який щодня байтить рандомного гравця 😎\n"
         "Напиши /activate у групі, щоб увімкнути."
     )
 
@@ -34,7 +33,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def track_users(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_chat.type not in ["group", "supergroup"]:
         return
-
     user = update.effective_user
     if user and not user.is_bot:
         active_users.add(user.id)
@@ -53,14 +51,12 @@ async def daily_banter(app):
             if not active_users:
                 await app.bot.send_message(chat_id=chat_id, text="Нема активних гравців для байту сьогодні.")
                 continue
-
             user_id = random.choice(list(active_users))
             try:
                 user = await app.bot.get_chat(user_id)
             except:
                 continue
             username = f"@{user.username}" if user.username else user.first_name
-
             message = random.choice(BANTER_MESSAGES).format(user=username)
             await app.bot.send_message(chat_id=chat_id, text=message)
 
@@ -78,8 +74,10 @@ if __name__ == "__main__":
     app.add_handler(CommandHandler("activate", activate))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, track_users))
 
-    # Запускаємо цикл щоденного байту
-    asyncio.create_task(daily_banter(app))
+    async def post_init(app):
+        app.create_task(daily_banter(app))
+
+    app.post_init = post_init
 
     print("Бот запущено...")
     app.run_polling()

@@ -8,15 +8,16 @@ TELEGRAM_BOT_TOKEN = "8507633938:AAFRcZ9hTODKM7WRkcI5kHpBAx3admkoAsM"
 
 TIMEZONE = pytz.timezone("Europe/Kyiv")
 POST_HOUR = 14
-POST_MINUTE = 10
+POST_MINUTE = 25
 
 BANTER_MESSAGES = [
-    "🎯 {user}, сьогодні твоя черга тягнути катку 😎",
-    "🔥 {user}, готуйся — вся тима розраховує на тебе!",
-    "💥 {user}, не забудь: сьогодні без фідів 😏",
-    "😈 {user}, якщо програємо — знаємо кого винити (жарт 😄)",
-    "🧠 {user}, включай мозок — сьогодні твій день!",
-    "... {user}, ти або граєш або сі дивищ крінгу!"
+    # "🎯 {user}, сьогодні твоя черга тягнути катку 😎",
+    # "🔥 {user}, готуйся — вся тима розраховує на тебе!",
+    # "💥 {user}, не забудь: сьогодні без фідів 😏",
+    # "😈 {user}, якщо програємо — знаємо кого винити (жарт 😄)",
+    # "🧠 {user}, включай мозок — сьогодні твій день!",
+    # "... {user}, ти або граєш або сі дивищ крінгу!"
+    "... {user}, Юрі ти що сплє?!"
 ]
 
 active_users = set()
@@ -37,6 +38,14 @@ async def track_users(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if user and not user.is_bot:
         active_users.add(user.id)
 
+async def show_users(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not active_users:
+        await update.message.reply_text("Поки що немає активних користувачів 😢")
+        return
+
+    # Виводимо список user_id
+    users_text = ", ".join(str(user_id) for user_id in active_users)
+    await update.message.reply_text(f"Активні користувачі: {users_text}")
 
 async def daily_banter(app):
     while True:
@@ -66,14 +75,19 @@ async def activate(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_ids.add(chat_id)
     await update.message.reply_text("Активовано! Я буду щодня байтити рандомного гравця 😎")
 
+async def add_me(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user = update.effective_user
+    active_users.add(user.id)
+    await update.message.reply_text(f"{user.first_name} доданий до активних гравців!")
+
 
 if __name__ == "__main__":
     app = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
-
+    app.add_handler(CommandHandler("addme", add_me))
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("activate", activate))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, track_users))
-
+    app.add_handler(CommandHandler("users", show_users))
     async def post_init(app):
         app.create_task(daily_banter(app))
 

@@ -6,7 +6,7 @@ from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, Con
 
 TELEGRAM_BOT_TOKEN = "8507633938:AAFRcZ9hTODKM7WRkcI5kHpBAx3admkoAsM"
 TIMEZONE = pytz.timezone("Europe/Kyiv")
-POST_TIME = time(hour=13, minute=28, tzinfo=TIMEZONE)
+POST_TIME = time(hour=14, minute=00, tzinfo=TIMEZONE)
 
 BANTER_MESSAGES = [
     "🎯 {user}, сьогодні твоя черга тягнути катку 😎",
@@ -65,7 +65,8 @@ async def activate(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 if __name__ == "__main__":
-    app = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
+    app = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).post_init_jobs(True).build()
+
 
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("activate", activate))

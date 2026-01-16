@@ -8,7 +8,7 @@ TELEGRAM_BOT_TOKEN = "8507633938:AAFRcZ9hTODKM7WRkcI5kHpBAx3admkoAsM"
 
 TIMEZONE = pytz.timezone("Europe/Kyiv")
 POST_HOUR = 14
-POST_MINUTE = 27
+POST_MINUTE = 50
 
 BANTER_MESSAGES = [
     "🎯 {user}, сьогодні твоя черга тягнути катку 😎",

@@ -6,7 +6,7 @@ import os
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes, filters
 
-TELEGRAM_BOT_TOKEN = os.getenv("8507633938:AAFRcZ9hTODKM7WRkcI5kHpBAx3admkoAsM")
+TELEGRAM_BOT_TOKEN = "8507633938:AAFRcZ9hTODKM7WRkcI5kHpBAx3admkoAsM"
 
 TIMEZONE = pytz.timezone("Europe/Kyiv")
 POST_HOUR = 14

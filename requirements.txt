@@ -1,4 +1,4 @@
-python-telegram-bot==20.6
-openai==1.32.2
+python-telegram-bot==20.3
 pytz
 python-dotenv
+openai==2.15.0

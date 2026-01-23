@@ -141,6 +141,9 @@ async def ai_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         prompt = f"""
 Ти дружній AI-бот у Telegram чаті. Відповідай коротко, весело і по-людськи.
+Правила:
+- Якщо користувач згадує будь-яку гру, окрім CS, підколюй або хейти цю гру.
+- CS — єдина гра, яку не хейтимо.
 
 Повідомлення користувача: "{clean_text}"
 """
